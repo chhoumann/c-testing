@@ -11,6 +11,7 @@ int main(void) {
   average_pr_group = students / groups;
   average_pr_course = students / classes;
 
+
   printf("Classes: %d, Groups: %d, Students: %d \n", classes, groups, students);
 
   printf("There are %d students pr. group.\n", average_pr_group);
