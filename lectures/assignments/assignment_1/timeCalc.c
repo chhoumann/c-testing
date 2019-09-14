@@ -8,7 +8,7 @@
 
 int main(void) {
 
-    /* Initializing the variables */
+    /* Declaring the variables */
     int seconds, minutes, hours, days, weeks;
     
     /* Taking an input */
