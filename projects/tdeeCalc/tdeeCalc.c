@@ -10,16 +10,11 @@ int main (void) {
     int activity;
 
     /* Taking input */
-    printf("Are you a male (1) or a female (0)? => ");
-    scanf("%lf", &gender);
-    printf("Please enter your age => ");
-    scanf("%lf", &age);
-    printf("Please enter your weight in kg => ");
-    scanf("%lf", &weight);
-    printf("Please enter your height in cm => ");
-    scanf("%lf", &height);
-    printf("Please enter your daily activity rated from 1 - 10 => ");
-    scanf("%d", &activity);
+    printf("Are you a male (1) or a female (0)? => ");                  scanf("%lf", &gender);
+    printf("Please enter your age => ");                                scanf("%lf", &age);
+    printf("Please enter your weight in kg => ");                       scanf("%lf", &weight);
+    printf("Please enter your height in cm => ");                       scanf("%lf", &height);
+    printf("Please enter your daily activity rated from 1 - 10 => ");   scanf("%d", &activity);
     
     /* Calculating BMR with Mifflin - St Jeor Formula */
     if (gender == 1)
