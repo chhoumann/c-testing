@@ -22,13 +22,23 @@ int main(void)
 
     /* Hours output */
     if (hours > 0){
+        if (minutes == 0 && seconds == 0) {
+            printf("%d %s", hours, (hours > 1) ? "hours." : ((hours == 1) ? "hour." : ""));
+        } else {
         printf("%d %s", hours, (hours > 1) ? "hours" : ((hours == 1) ? "hour" : ""));
+        }
     }
 
     /* Minutes output */
     if (minutes > 0){
         if (hours > 0){
+            if (hours > 0 && seconds == 0){
+                printf(" and %d %s", minutes, (minutes > 1) ? "minutes." : ((minutes == 1) ? "minute." : ""));
+            } else {
             printf(", %d %s", minutes, (minutes > 1) ? "minutes" : ((minutes == 1) ? "minute" : ""));
+            }
+        } else if (hours == 0 && seconds == 0) {
+            printf("%d %s", minutes, (minutes > 1) ? "minutes." : ((minutes == 1) ? "minute." : ""));
         } else if (hours == 0) {
             printf("%d %s", minutes, (minutes > 1) ? "minutes" : ((minutes == 1) ? "minute" : ""));
         }
@@ -37,9 +47,13 @@ int main(void)
     /* Seconds output */
     if (seconds > 0) {
         if (hours > 0 || minutes > 0) {
-            printf(", %d %s", seconds, (seconds > 1) ? "seconds" : ((seconds == 1) ? "second" : ""));
+            if (hours > 0 && minutes > 0) {
+                printf(", and %d %s", seconds, (seconds > 1) ? "seconds." : ((seconds == 1) ? "second." : ""));
+            } else {
+                printf(" and %d %s", seconds, (seconds > 1) ? "seconds." : ((seconds == 1) ? "second." : ""));
+            }
         } else if (hours == 0 && minutes == 0){
-            printf("%d %s", seconds, (seconds > 1) ? "seconds" : ((seconds == 1) ? "second" : ""));
+            printf("%d %s", seconds, (seconds > 1) ? "seconds." : ((seconds == 1) ? "second." : ""));
         }
     }
 
