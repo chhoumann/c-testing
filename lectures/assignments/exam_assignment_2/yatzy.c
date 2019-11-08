@@ -28,7 +28,7 @@ Yatzy Game.
 [X]    Each category gets it\'s own function - except for the upper section. That should be doable using parameters.
 [X]    Points should be tracked. Functions return the amount of points received.
 [X]    Three rolls are given each attempt at a category. Should be able to keep throws that are relevant.
-[X]    Upper section.
+[ ]    Upper section. Need to make it so that you get the bonus if you get all 5 the same.
 [ ]    Lower section.   
 
 
@@ -84,6 +84,6 @@ int upperSection(int category){
                 keptDice++;
     }
 
-    return keptDice;
+    return keptDice * category;
 
 }
