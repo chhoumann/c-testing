@@ -37,33 +37,27 @@ Yatzy Game.
 #include <stdlib.h>
 #include <time.h>
 #define DIE_MAX_EYES 6
-#define ALL_DIE 5
-#define MAX_THROWS 3
+#define ALL_DIE 5 /* This is to accommodate any wishes of using more than a set number of dice. */
 
 /* Function delcarations */
 int* roll_multiple_dies(int *rolls, int n);
 int upperSection(int category);
-static int pointTracker(int points);
+int usHandler(void);
 
 
 int main(void){
-    /* Declaration & preparing for randomization later srand. */
+    /* Declaration & preparing for randomization later using srand. */
+    int totalPoints = 0;
     srand(time(NULL));
-    int i, points = 0, totalPoints = 0;
-    
-    printf("Results\n");
-    for (int i = 1; i <= 6; i++){
-        points = upperSection(i);
-        totalPoints += points;
-        printf("%ds - you scored %d points!\n", i, points);
-    }
-    printf("Your total points: %d", totalPoints);
+    /* Add points handling */
+    totalPoints = usHandler();
 
     return 0;
 }
 
 int* roll_multiple_dies(int *rolls, int n){
-    for (int i = 0; i < n; i++)
+    int i;
+    for (i = 0; i < n; i++)
         rolls[i] = (rand() % DIE_MAX_EYES) + 1;
         
     return rolls;
@@ -71,19 +65,46 @@ int* roll_multiple_dies(int *rolls, int n){
 
 int upperSection(int category){
     int keptDice = 0;
+    int j, i;
 
     /* Throws and matches die to category */
-   for(int i = 0; i < MAX_THROWS; i++){
-        /* Getting array of rolls based on amount of throws. */
-        int temp_array[ALL_DIE - keptDice];
-        int* rolls = roll_multiple_dies(temp_array, ALL_DIE - keptDice);
+    /* Getting array of rolls based on amount of throws. */
+    int temp_array[ALL_DIE];
+    int* rolls = roll_multiple_dies(temp_array, ALL_DIE);
 
-        /* Matching */
-        for (int j = 0; j < ALL_DIE - keptDice; j++)
-            if (rolls[j] == category)
-                keptDice++;
-    }
+    printf("Rolls: ");
+    for (i = 0; i < ALL_DIE - 1; i++)
+        printf("%d, ", rolls[i]);
+    printf("%d.\n", rolls[ALL_DIE - 1]);
+
+    /* Matching */
+    for (j = 0; j < ALL_DIE; j++)
+        if (rolls[j] == category)
+            keptDice++;
 
     return keptDice * category;
 
+}
+
+int usHandler(void){
+    /* Declarations */
+    int i;
+    int points = 0, totalPoints = 0;
+
+    /* Upper Section */
+    printf("Results | Upper Section\n");
+    for (i = 1; i <= 6; i++){
+        points = upperSection(i);
+        totalPoints += points;
+        printf("%ds - you scored %d points!\n", i, points);
+    }
+    printf("Your total points: %d", totalPoints);
+
+    /* Bonus handler */
+    if (totalPoints > 63){
+        totalPoints += 50;
+        printf("\nYou were awarded a bonus of 50 points because you scored more than 63 in the upper section!\n");
+    }
+
+    return totalPoints;
 }
