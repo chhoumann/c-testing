@@ -43,6 +43,9 @@ Yatzy Game.
 int* roll_multiple_dies(int *rolls, int n);
 int upperSection(int category);
 int usHandler(void);
+int compare(const void * a, const void * b);
+int sortRolls(void);
+int onePair(void);
 
 
 int main(void){
@@ -50,7 +53,8 @@ int main(void){
     int totalPoints = 0;
     srand(time(NULL));
     /* Add points handling */
-    totalPoints = usHandler();
+    // totalPoints = usHandler();
+    onePair();
 
     return 0;
 }
@@ -67,11 +71,11 @@ int upperSection(int category){
     int keptDice = 0;
     int j, i;
 
-    /* Throws and matches die to category */
-    /* Getting array of rolls based on amount of throws. */
+    /* Getting array of rolls. */
     int temp_array[ALL_DIE];
     int* rolls = roll_multiple_dies(temp_array, ALL_DIE);
 
+    /* Prints rolls */
     printf("Rolls: ");
     for (i = 0; i < ALL_DIE - 1; i++)
         printf("%d, ", rolls[i]);
@@ -107,4 +111,35 @@ int usHandler(void){
     }
 
     return totalPoints;
+}
+
+int compare(const void * a, const void * b){
+   return (*(double*)a - *(double*)b);
+}
+
+int onePair(void){
+    int i;
+    /* Rolls -> Sort the rolls -> Check for two of the same integer in a row */
+    /* CURRENT ISSUE: DOESN'T SORT PROPERLY */
+    /* ROLLS | Getting array of rolls. */
+    int temp_array[ALL_DIE];
+    int* rolls = roll_multiple_dies(temp_array, ALL_DIE);
+
+    /* ROLLS | Prints rolls */
+    printf("Rolls: ");
+    for (i = 0; i < ALL_DIE - 1; i++)
+        printf("%d, ", rolls[i]);
+    printf("%d.\n", rolls[ALL_DIE - 1]);
+
+    /* ROLLS | Sorts the rolls */
+    qsort(rolls, ALL_DIE, sizeof(int), compare);
+
+    /* ROLLS | Prints rolls */
+    printf("Rolls: ");
+    for (i = 0; i < ALL_DIE - 1; i++)
+        printf("%d, ", rolls[i]);
+    printf("%d.\n", rolls[ALL_DIE - 1]);
+
+    return 0;
+
 }
