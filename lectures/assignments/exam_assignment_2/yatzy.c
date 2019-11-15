@@ -1,3 +1,9 @@
+/*
+*   Author: Christian Bager Bach Houmann
+*   Due date: 15/11/2019
+*   Purpose: A program that automatically plays Yatzy. 
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -44,18 +50,39 @@ int* roll_multiple_dies(int *rolls, int n){
     return rolls;
 }
 
+int descendingSorting(int * rollArray){
+   int i, j;
+
+    /* Sorts array in descending order. Had to do it this way because qsort would not work for me. */
+   for (i = 0; i < ALL_DIE; i++){
+       for (j = 0; j < ALL_DIE; j++){
+           if (rollArray[j] < rollArray[i]){
+               int temp = rollArray[i];
+               rollArray[i] = rollArray[j];
+               rollArray[j] = temp;
+           }
+       }
+   }
+   return * rollArray;
+}
+
 int upperSection(int category){
-    int keptDice = 0;
-    int j;
+    int j,  
+        keptDice = 0;
 
     /* Getting array of rolls. */
     int temp_array[ALL_DIE];
     int* rolls = roll_multiple_dies(temp_array, ALL_DIE);
 
+    /* Sorting */
+    *rolls = descendingSorting(rolls);
+
     /* Matching */
-    for (j = 0; j < ALL_DIE; j++)
-        if (rolls[j] == category)
+    for (j = 0; (j < ALL_DIE) && (keptDice != 5); j++){
+        if (rolls[j] == category){
             keptDice++;
+        }
+    }
 
     return keptDice * category;
 
@@ -67,37 +94,21 @@ int upperHandler(void){
     int points = 0, totalPoints = 0;
 
     /* Upper Section */
-        printf("     Upper Section   | Points\n");
+    printf("    Upper Section   | Points\n");
     for (i = 1; i <= 6; i++){
         points = upperSection(i);
         totalPoints += points;
         printf("               %ds   | %d\n", i, points);
     }
-    printf("Your total points so far: %d", totalPoints);
 
     /* Bonus handler */
     if (totalPoints > 63){
         totalPoints += 50;
     }
-
+    printf("   ***********************\n");
+    printf("    Current Total   | %d ", totalPoints);
+    printf("\n   ***********************");
     return totalPoints;
-}
-
-int descendingSorting(int * rollArray){
-   int i, j, 
-       n = ALL_DIE;
-
-    /* Sorts array in descending order. Had to do it this way because qsort would not work for me. */
-   for (i = 0; i < n; i++){
-       for (j = 0; j < n; j++){
-           if (rollArray[j] < rollArray[i]){
-               int temp = rollArray[i];
-               rollArray[i] = rollArray[j];
-               rollArray[j] = temp;
-           }
-       }
-   }
-   return * rollArray;
 }
 
 int onePair(void){
@@ -137,18 +148,16 @@ int twoPairs(void){
     *rolls = descendingSorting(rolls);
 
     /* Check for two of the same integer in a row - the pairs must be different from one another. */
-    for (j = 0; j < ALL_DIE - 1; j++){
+    for (j = 0, stopCond = 0; (j < ALL_DIE - 1) && (stopCond == 0); j++){
         /* First pair */
         if (rolls[j] == rolls[j+1]){
             points = 2 * rolls[j];
             firstNum = rolls[j];
             /* Second pair */
-            for (i = 0, stopCond = 0; (i < ALL_DIE - 1) && (stopCond == 0); i++){
+            for (i = 0; (i < ALL_DIE - 1) && (stopCond == 0); i++){
                 if ((rolls[i] == rolls[i+1]) && (rolls[i] != firstNum)){
                     points += 2 * rolls[i];
                     stopCond = 1;
-                } else {
-                    points = 0;
                 }
             }
         }
@@ -171,7 +180,7 @@ int threeOfAKind(void){
     *rolls = descendingSorting(rolls);
 
     /* Looking for 3 identical integers in a row */
-    for(i = 0; i < ALL_DIE - 2; i++){
+    for(i = 0; (i < ALL_DIE - 2) && (points == 0); i++){
         if ((rolls[i] == rolls[i+1]) && (rolls[i] == rolls[i+2]))
             points = rolls[i] * 3;
     }
@@ -193,7 +202,7 @@ int fourOfAKind(void){
     *rolls = descendingSorting(rolls);
 
     /* Looking for 4 identical integers in a row */
-    for(i = 0; i < ALL_DIE - 3; i++){
+    for(i = 0; (i < ALL_DIE - 3) && (points == 0); i++){
         if ((rolls[i] == rolls[i+1]) && (rolls[i] == rolls[i+2]) && (rolls[i] == rolls[i+3]))
             points = rolls[i] * 4;
     }
