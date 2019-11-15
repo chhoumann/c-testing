@@ -1,38 +1,3 @@
-/*
-Yatzy Game.
-
-***** SCORING *****
-    Upper Section
-        Ones                                                                    Score: The sum of all dice showing the number 1.
-        Twos                                                                    Score: The sum of all dice showing the number 2.
-        Threes                                                                  Score: The sum of all dice showing the number 3.
-        Fours                                                                   Score: The sum of all dice showing the number 4.
-        Fives                                                                   Score: The sum of all dice showing the number 5.
-        Sixes                                                                   Score: The sum of all dice showing the number 6.
-    Lower Section
-        One Pair:           Two dice showing the same number.                   Score: Sum of those two dice.
-        Two Pairs:          Two different pairs of dice.                        Score: Sum of dice in those two pairs.
-        Three of a Kind:    Three dice showing the same number.                 Score: Sum of those three dice.
-        Four of a Kind:     Four dice with the same number.                     Score: Sum of those four dice.
-        Small Straight:     The combination 1-2-3-4-5.                          Score: 15 points.
-        Large Straight:     The combination 2-3-4-5-6.                          Score: 20 points.
-        Full House:         Any set of three combined with a different pair.    Score: Sum of all the dice.
-        Chance:             Any combination of dice.                            Score: Sum of all the dice.
-        Yatzy:              All five dice with the same number.                 Score: 50 points.
-
-        Two Pairs and Full House must have different numbers, so 1-5-5-6-6 will give 22 points as Two Pairs, but 1-5-5-5-5 will give nothing.
-
-***** LOGIC *****
-[X]    Roll 5 die unless there is any reserved.
-[X]    Forced Yatzy; categories are rolled for sequentially.
-[X]    Each category gets it\'s own function - except for the upper section. That should be doable using parameters.
-[X]    Points should be tracked. Functions return the amount of points received.
-[X]    Three rolls are given each attempt at a category. Should be able to keep throws that are relevant.
-[ ]    Upper section. Need to make it so that you get the bonus if you get all 5 the same.
-[ ]    Lower section.   
-
-
-*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -50,7 +15,7 @@ int twoPairs(void);
 int threeOfAKind(void);
 int fourOfAKind(void);
 int smallStraight(void);
-int largeStright(void);
+int largeStraight(void);
 int fullHouse(void);
 int chance(void);
 int yatzy(void);
@@ -61,11 +26,12 @@ int main(void){
     /* Declaration & preparing for randomization later using srand. */
     int totalPoints = 0;
     srand(time(NULL));
+
     /* Add points handling */
-    // totalPoints = upperHandler();
-    
-    
-    
+    totalPoints = upperHandler() + lowerHandler();
+
+    printf("\nTotal Points: %d\n", totalPoints);
+    printf("Thank you for playing.");
 
     return 0;
 }
@@ -80,17 +46,11 @@ int* roll_multiple_dies(int *rolls, int n){
 
 int upperSection(int category){
     int keptDice = 0;
-    int j, i;
+    int j;
 
     /* Getting array of rolls. */
     int temp_array[ALL_DIE];
     int* rolls = roll_multiple_dies(temp_array, ALL_DIE);
-
-    /* Prints rolls */
-    printf("Rolls: ");
-    for (i = 0; i < ALL_DIE - 1; i++)
-        printf("%d, ", rolls[i]);
-    printf("%d.\n", rolls[ALL_DIE - 1]);
 
     /* Matching */
     for (j = 0; j < ALL_DIE; j++)
@@ -107,18 +67,17 @@ int upperHandler(void){
     int points = 0, totalPoints = 0;
 
     /* Upper Section */
-    printf("Results | Upper Section\n");
+        printf("     Upper Section   | Points\n");
     for (i = 1; i <= 6; i++){
         points = upperSection(i);
         totalPoints += points;
-        printf("%ds - you scored %d points!\n", i, points);
+        printf("               %ds   | %d\n", i, points);
     }
-    printf("Your total points: %d", totalPoints);
+    printf("Your total points so far: %d", totalPoints);
 
     /* Bonus handler */
     if (totalPoints > 63){
         totalPoints += 50;
-        printf("\nYou were awarded a bonus of 50 points because you scored more than 63 in the upper section!\n");
     }
 
     return totalPoints;
@@ -233,11 +192,6 @@ int fourOfAKind(void){
     /* Sorts the rolls */
     *rolls = descendingSorting(rolls);
 
-    /* TEMP PRINT */
-    printf("Rolls: ");
-    for (i = 0; i < ALL_DIE; i++)
-        printf(" %d ", rolls[i]);
-
     /* Looking for 4 identical integers in a row */
     for(i = 0; i < ALL_DIE - 3; i++){
         if ((rolls[i] == rolls[i+1]) && (rolls[i] == rolls[i+2]) && (rolls[i] == rolls[i+3]))
@@ -245,4 +199,184 @@ int fourOfAKind(void){
     }
 
     return points;
+}
+
+int smallStraight(void){
+    int i, j, k, f, g;
+    /* Rolls -> Check if there is 1-2-3-4-5 in the array */
+
+    /* Getting array of rolls. */
+    int temp_array[ALL_DIE];
+    int* rolls = roll_multiple_dies(temp_array, ALL_DIE);
+
+    for (i = 0; i < ALL_DIE; i++){
+        if (rolls[i] == 1) {
+            for (j = 0; j < ALL_DIE; j++){
+                if (rolls[j] == 2){
+                    for (k = 0; k < ALL_DIE; k++){
+                        if (rolls[k] == 3) {
+                            for (f = 0; f < ALL_DIE; f++){
+                                if (rolls[f] == 4){
+                                    for (g = 0; g < ALL_DIE; g++){
+                                        if (rolls[g] == 5){
+                                            return 15; /* One gets 15 points for getting rolls 1-2-3-4-5. */
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+int largeStraight(void){
+    int i, j, k, f, g;
+    /* Rolls -> Check if there is 2-3-4-5-6 in the array */
+
+    /* Getting array of rolls. */
+    int temp_array[ALL_DIE];
+    int* rolls = roll_multiple_dies(temp_array, ALL_DIE);
+
+    for (i = 0; i < ALL_DIE; i++){
+        if (rolls[i] == 2) {
+            for (j = 0; j < ALL_DIE; j++){
+                if (rolls[j] == 3){
+                    for (k = 0; k < ALL_DIE; k++){
+                        if (rolls[k] == 4) {
+                            for (f = 0; f < ALL_DIE; f++){
+                                if (rolls[f] == 5){
+                                    for (g = 0; g < ALL_DIE; g++){
+                                        if (rolls[g] == 6){
+                                            return 20; /* One gets 20 points for getting rolls 2-3-4-5-6. */
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+int fullHouse(void){
+    int i, j,
+        points = 0,
+        sameCheck = 0;
+    /* Rolls -> Sort -> Combine three of a kind with one pair - but their numbers cannot be the same. So rolling fx. 55555 will not count. */
+
+    /* Getting array of rolls. */
+    int temp_array[ALL_DIE];
+    int* rolls = roll_multiple_dies(temp_array, ALL_DIE);
+
+    /* Sorts the rolls */
+    *rolls = descendingSorting(rolls);
+
+    /* Looking for 3 identical integers in a row */
+    for(i = 0; i < ALL_DIE - 2; i++){
+        if ((rolls[i] == rolls[i+1]) && (rolls[i] == rolls[i+2])){
+            points = rolls[i] * 3;
+            sameCheck = rolls[i];
+            /* Checks for two of the same integer in a row */
+            for (j = 0; j < ALL_DIE - 1; j++){
+                if ((rolls[j] == rolls[j+1]) && (rolls[j] != sameCheck)){
+                    points += 2 * rolls[j];
+                    return points;
+            } 
+    }
+        }
+    }
+
+    
+    return 0;
+}
+
+int chance(void){
+    int i, 
+        points = 0;
+    /* Rolls -> Sort the rolls -> Sum the 5 best rolls -> Return sum as points */
+
+    /* Getting array of rolls. */
+    int temp_array[ALL_DIE];
+    int* rolls = roll_multiple_dies(temp_array, ALL_DIE);
+
+    /* Sorts the rolls */
+    *rolls = descendingSorting(rolls);
+
+    /* Get 5 best and return */    
+    for (i = 0; i < 5; i++)
+        points += rolls[i];
+    
+    return points;
+}
+
+int yatzy(void){
+    int i;
+    /* Rolls -> Sort the rolls -> Check if 5 of the same integer in a row -> Return 50 points */
+
+    /* Getting array of rolls. */
+    int temp_array[ALL_DIE];
+    int* rolls = roll_multiple_dies(temp_array, ALL_DIE);
+
+    /* Sorts the rolls */
+    *rolls = descendingSorting(rolls);
+
+    /* Check if 5 of the same integer in a row and return 50 points if true */
+    for(i = 0; i < ALL_DIE - 4; i++){
+        if ((rolls[i] == rolls[i+1]) && (rolls[i] == rolls[i+2]) && (rolls[i] == rolls[i+3]) && (rolls[i] == rolls[i+4]))
+            return 50;
+    }
+    
+    return 0;
+}
+
+int lowerHandler(void){
+    int temp = 0,
+        totalpoints = 0;
+    /* Use all lower section functions and return total points  */
+
+    printf("\n    Lower Section   | Points:");
+    /* One Pair */
+    temp = onePair(); totalpoints = temp;
+    printf("\n         One Pair   | %d", (temp == 0 ? 0 : temp));
+
+    /* Two Pairs */
+    temp = twoPairs(); totalpoints += temp;
+    printf("\n        Two Pairs   | %d", (temp == 0 ? 0 : temp));
+
+    /* Three of a Kind */
+    temp = threeOfAKind(); totalpoints += temp;
+    printf("\n  Three of a Kind   | %d", (temp == 0 ? 0 : temp));
+
+    /* Four of a Kind */
+    temp = fourOfAKind(); totalpoints += temp;
+    printf("\n   Four of a Kind   | %d", (temp == 0 ? 0 : temp));
+
+    /* Small Straight */
+    temp = smallStraight(); totalpoints += temp;
+    printf("\n   Small Straight   | %d", (temp == 0 ? 0 : temp));
+
+    /* Large Straight */
+    temp = largeStraight(); totalpoints += temp;
+    printf("\n   Large Straight   | %d", (temp == 0 ? 0 : temp));
+
+    /* Full House */
+    temp = fullHouse(); totalpoints += temp;
+    printf("\n       Full House   | %d", (temp == 0 ? 0 : temp));
+
+    /* Chance */
+    temp = chance(); totalpoints += temp;
+    printf("\n           Chance   | %d", (temp == 0 ? 0 : temp));
+
+    /* Yatzy */
+    temp = yatzy(); totalpoints += temp;
+    printf("\n            Yatzy   | %d", (temp == 0 ? 0 : temp));
+
+    return totalpoints;
 }
