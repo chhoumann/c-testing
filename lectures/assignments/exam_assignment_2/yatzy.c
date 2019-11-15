@@ -47,7 +47,7 @@ int descendingSorting(int * rollArray);
 int sortRolls(void);
 int onePair(void);
 int twoPairs(void);
-int twoOfAKind(void);
+int threeOfAKind(void);
 int fourOfAKind(void);
 int smallStraight(void);
 int largeStright(void);
@@ -63,6 +63,7 @@ int main(void){
     srand(time(NULL));
     /* Add points handling */
     // totalPoints = upperHandler();
+    
     
     
 
@@ -194,5 +195,54 @@ int twoPairs(void){
         }
 
     }
+    return points;
+}
+
+int threeOfAKind(void){
+    int i,
+        points = 0;
+
+    /* Roll -> Sort -> Look for i & i+1 & i+2 being identical */
+
+    /* Getting array of rolls. */
+    int temp_array[ALL_DIE];
+    int* rolls = roll_multiple_dies(temp_array, ALL_DIE);
+
+    /* Sorts the rolls */
+    *rolls = descendingSorting(rolls);
+
+    /* Looking for 3 identical integers in a row */
+    for(i = 0; i < ALL_DIE - 2; i++){
+        if ((rolls[i] == rolls[i+1]) && (rolls[i] == rolls[i+2]))
+            points = rolls[i] * 3;
+    }
+
+    return points;
+}
+
+int fourOfAKind(void){
+    int i,
+        points = 0;
+
+    /* Roll -> Sort -> Look for i & i+1 & i+2 & i+3 being identical */
+
+    /* Getting array of rolls. */
+    int temp_array[ALL_DIE];
+    int* rolls = roll_multiple_dies(temp_array, ALL_DIE);
+
+    /* Sorts the rolls */
+    *rolls = descendingSorting(rolls);
+
+    /* TEMP PRINT */
+    printf("Rolls: ");
+    for (i = 0; i < ALL_DIE; i++)
+        printf(" %d ", rolls[i]);
+
+    /* Looking for 4 identical integers in a row */
+    for(i = 0; i < ALL_DIE - 3; i++){
+        if ((rolls[i] == rolls[i+1]) && (rolls[i] == rolls[i+2]) && (rolls[i] == rolls[i+3]))
+            points = rolls[i] * 4;
+    }
+
     return points;
 }
