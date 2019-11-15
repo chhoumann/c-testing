@@ -42,10 +42,19 @@ Yatzy Game.
 /* Function delcarations */
 int* roll_multiple_dies(int *rolls, int n);
 int upperSection(int category);
-int usHandler(void);
-int compare(const void * a, const void * b);
+int upperHandler(void);
+int descendingSorting(int * rollArray);
 int sortRolls(void);
 int onePair(void);
+int twoPairs(void);
+int twoOfAKind(void);
+int fourOfAKind(void);
+int smallStraight(void);
+int largeStright(void);
+int fullHouse(void);
+int chance(void);
+int yatzy(void);
+int lowerHandler(void);
 
 
 int main(void){
@@ -53,8 +62,9 @@ int main(void){
     int totalPoints = 0;
     srand(time(NULL));
     /* Add points handling */
-    // totalPoints = usHandler();
-    onePair();
+    // totalPoints = upperHandler();
+    
+    
 
     return 0;
 }
@@ -90,7 +100,7 @@ int upperSection(int category){
 
 }
 
-int usHandler(void){
+int upperHandler(void){
     /* Declarations */
     int i;
     int points = 0, totalPoints = 0;
@@ -113,33 +123,76 @@ int usHandler(void){
     return totalPoints;
 }
 
-int compare(const void * a, const void * b){
-   return (*(double*)a - *(double*)b);
+int descendingSorting(int * rollArray){
+   int i, j, 
+       n = ALL_DIE;
+
+    /* Sorts array in descending order. Had to do it this way because qsort would not work for me. */
+   for (i = 0; i < n; i++){
+       for (j = 0; j < n; j++){
+           if (rollArray[j] < rollArray[i]){
+               int temp = rollArray[i];
+               rollArray[i] = rollArray[j];
+               rollArray[j] = temp;
+           }
+       }
+   }
+   return * rollArray;
 }
 
 int onePair(void){
-    int i;
+    int j, stopOnFirst, 
+        points = 0;
     /* Rolls -> Sort the rolls -> Check for two of the same integer in a row */
-    /* CURRENT ISSUE: DOESN'T SORT PROPERLY */
-    /* ROLLS | Getting array of rolls. */
+    /* Getting array of rolls. */
     int temp_array[ALL_DIE];
     int* rolls = roll_multiple_dies(temp_array, ALL_DIE);
 
-    /* ROLLS | Prints rolls */
-    printf("Rolls: ");
-    for (i = 0; i < ALL_DIE - 1; i++)
-        printf("%d, ", rolls[i]);
-    printf("%d.\n", rolls[ALL_DIE - 1]);
+    /* Sorts the rolls */
+    *rolls = descendingSorting(rolls);
 
-    /* ROLLS | Sorts the rolls */
-    qsort(rolls, ALL_DIE, sizeof(int), compare);
+    /* Checks for two of the same integer in a row */
+    for (j = 0, stopOnFirst = 0; (j < ALL_DIE - 1) && (stopOnFirst == 0); j++){
+        if (rolls[j] == rolls[j+1]){
+            points = 2 * rolls[j];
+            stopOnFirst = 1;
+        }
+    }
 
-    /* ROLLS | Prints rolls */
-    printf("Rolls: ");
-    for (i = 0; i < ALL_DIE - 1; i++)
-        printf("%d, ", rolls[i]);
-    printf("%d.\n", rolls[ALL_DIE - 1]);
+    return points;
 
-    return 0;
+}
 
+int twoPairs(void){
+    int j, i, stopCond,
+        points = 0,
+        firstNum = 0;
+    /* Rolls -> Sort the rolls -> Check for two of the same integer in a row twice; the pairs must be different from one another. */
+
+    /* Getting array of rolls. */
+    int temp_array[ALL_DIE];
+    int* rolls = roll_multiple_dies(temp_array, ALL_DIE);
+
+    /* Sorts the rolls */
+    *rolls = descendingSorting(rolls);
+
+    /* Check for two of the same integer in a row - the pairs must be different from one another. */
+    for (j = 0; j < ALL_DIE - 1; j++){
+        /* First pair */
+        if (rolls[j] == rolls[j+1]){
+            points = 2 * rolls[j];
+            firstNum = rolls[j];
+            /* Second pair */
+            for (i = 0, stopCond = 0; (i < ALL_DIE - 1) && (stopCond == 0); i++){
+                if ((rolls[i] == rolls[i+1]) && (rolls[i] != firstNum)){
+                    points += 2 * rolls[i];
+                    stopCond = 1;
+                } else {
+                    points = 0;
+                }
+            }
+        }
+
+    }
+    return points;
 }
