@@ -11,6 +11,7 @@
 
 int is_palindrome_iter(char *str);
 int is_palindrome_rec(char *str1, char *str2, int i);
+int testing(char *str);
 
 int main(void) {
     char str[MAXLENGTH], str_temp[MAXLENGTH];
