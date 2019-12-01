@@ -1,7 +1,7 @@
 /*
 *   Author: Christian Bager Bach Houmann
-*   Due date: 25/11/2019
-*   Purpose: Printing a sorted deck of cards. First comes clubs, then diamonds, then hearts, and last comes spades.
+*   Due date: 02/12/2019
+*   Purpose: Checking if a word/string is a palindrome.
 */
 #include <stdio.h>
 #include <stdlib.h>
