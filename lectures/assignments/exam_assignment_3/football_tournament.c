@@ -31,7 +31,7 @@ Til sidst skal holdene sorteres så man kan se stillingen i turneringen. Der sor
 #define NUMBER_OF_TEAMS 14
 
 typedef struct {
-    char * team_name;
+    char team_name[CHARACTERS_IN_TEAM_NAME];
     int points;
     int goals_scored;
     int goals_against;
@@ -53,13 +53,19 @@ int count_lines_from_file();
 match* match_reader(void);
 team* create_teams(match* matches);
 team * team_sort(match * matches, team * teams, int i, int j, int match_count);
+int team_name_duplicate_checker(char *name, team* teams);
 
 
 int main(void) {
+    int i;
     match* matches = match_reader();
    
     team* teams = create_teams(matches);
-    int i;
+
+    printf("TEAM NAME | POINTS | GOALS SCORED | GOALS SCORED AGAINST\n");
+    for (i = 0; i < NUMBER_OF_TEAMS; i++){
+        printf("%s  %d  %d  %d\n", teams[i].team_name, teams[i].points, teams[i].goals_scored, teams[i].goals_against);
+    }
 
 
     return 0;
@@ -104,17 +110,87 @@ match* match_reader(void) {
     return matches;
 }
 
+int h(char *name) {
+    if (strcmp(name, "VB") == 0)
+        return 0;
+    if (strcmp(name, "HOB") == 0)
+        return 1;
+    if (strcmp(name, "SDR") == 0)
+        return 2;
+    if (strcmp(name, "AaB") == 0)
+        return 3;
+    if (strcmp(name, "FCM") == 0)
+        return 4;
+    if (strcmp(name, "AGF") == 0)
+        return 5;
+    if (strcmp(name, "FCN") == 0)
+        return 6;
+    if (strcmp(name, "EFB") == 0)
+        return 7;
+    if (strcmp(name, "VEN") == 0)
+        return 8;
+    if (strcmp(name, "OB") == 0)
+        return 9;
+    if (strcmp(name, "FCK") == 0)
+        return 10;
+    if (strcmp(name, "ACH") == 0)
+        return 11;
+    if (strcmp(name, "RFC") == 0)
+        return 12;
+    if (strcmp(name, "BIF") == 0)
+        return 13;
+}
 
 team* create_teams(match* matches) {
-    /* Should put team names into array of teams. */
+    /* Should put team names into array of teams and count stats. */
     int match_count = count_lines_from_file();
     team *teams = malloc(NUMBER_OF_TEAMS * sizeof(team));
     team new_team;
-    int i = 0, k = 0, counter = 0;    
-    
-    /* Kør igennem kamp-arrayet. Noter enhver kamp og indsæt data i team array.
-        Hvis et team allerede er der, så skal kun data indsættes på den rigtige plads. */
+    int i = 0, index = 0;    
+    char name[4];
 
-    printf("Team 1 name: %s", teams[0].team_name);
+    /* Setup */
+    for (i = 0; i < NUMBER_OF_TEAMS; i++){
+        strcpy(name, matches[i].home_team);
+        index = h(name);
+
+        strncpy(new_team.team_name, matches[i].home_team, CHARACTERS_IN_TEAM_NAME);
+        new_team.goals_against = 0;
+        new_team.goals_scored = 0;
+        new_team.points = 0;
+
+        teams[index] = new_team;
+    }
+
+    /* Home team */
+    for (i = 0; i < match_count; i++){
+        strcpy(name, matches[i].home_team);
+        index = h(name);
+        
+        teams[index].goals_against += matches[i].opponent_team_score;
+        teams[index].goals_scored += matches[i].home_team_score;
+        if (matches[i].home_team_score < matches[i].opponent_team_score)
+            teams[index].points += LOSS_POINTS;
+        if (matches[i].home_team_score > matches[i].opponent_team_score)
+            teams[index].points += WIN_POINTS;
+        if (matches[i].home_team_score == matches[i].opponent_team_score)
+            teams[index].points += DRAW_POINTS;
+    }
+
+    
+    /* Opponent team */
+    for (i = 0; i < match_count; i++){
+        strcpy(name, matches[i].opponent_team);
+        index = h(name);
+        
+        teams[index].goals_scored += matches[i].opponent_team_score;
+        teams[index].goals_against += matches[i].home_team_score;
+        if (matches[i].home_team_score > matches[i].opponent_team_score)
+            teams[index].points += LOSS_POINTS;
+        if (matches[i].home_team_score < matches[i].opponent_team_score)
+            teams[index].points += WIN_POINTS;
+        if (matches[i].home_team_score == matches[i].opponent_team_score)
+            teams[index].points += DRAW_POINTS;
+    }
     return teams;
 }
